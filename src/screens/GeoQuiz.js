@@ -8,10 +8,20 @@ import Africa from "../geoQuizJSON/Africa";
 import NorthAmerica from "../geoQuizJSON/NorthAmerica";
 import SouthAmerica from "../geoQuizJSON/SouthAmerica";
 import Oceania from "../geoQuizJSON/Oceania";
+import AsiaEN from "../geoQuizJSON/AsiaEN";
+import EuropeEN from "../geoQuizJSON/EuropeEN";
+import AfricaEN from "../geoQuizJSON/AfricaEN";
+import NorthAmericaEN from "../geoQuizJSON/NorthAmericaEN";
+import SouthAmericaEN from "../geoQuizJSON/SouthAmericaEN";
+import OceaniaEN from "../geoQuizJSON/OceaniaEN";
 import ExitPlay from "../components/ExitPlay";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import Countdown from "../components/Countdown";
+import { useContext } from "react";
+import GameContext from "../GameContext";
+import LocalizationContext from "../LocalizationContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const GeoQuiz = (props) => {
   const [question, setQuestion] = useState({});
   const [counter, setCounter] = useState(0);
@@ -25,14 +35,27 @@ const GeoQuiz = (props) => {
     <MaterialCommunityIcons name="cards-heart" size={24} color="red" />,
     <MaterialCommunityIcons name="cards-heart" size={24} color="red" />,
   ]);
-  const continents = {
-    Asia: Asia,
-    Europe: Europe,
-    Africa: Africa,
-    NorthAmerica: NorthAmerica,
-    SouthAmerica: SouthAmerica,
-    Oceania: Oceania,
-  };
+
+  const { gameHistory, setGameHistory, findHistory } = useContext(GameContext);
+  const { questionLanguages, langObj } = useContext(LocalizationContext);
+  const continents =
+    questionLanguages === "tr"
+      ? {
+          Asia: Asia,
+          Europe: Europe,
+          Africa: Africa,
+          NorthAmerica: NorthAmerica,
+          SouthAmerica: SouthAmerica,
+          Oceania: Oceania,
+        }
+      : {
+          Asia: AsiaEN,
+          Europe: EuropeEN,
+          Africa: AfricaEN,
+          NorthAmerica: NorthAmericaEN,
+          SouthAmerica: SouthAmericaEN,
+          Oceania: OceaniaEN,
+        };
   useEffect(() => {
     getQuestion();
   }, []);
@@ -68,7 +91,7 @@ const GeoQuiz = (props) => {
     }
     checkAllQuestionsAnswered();
     if (lives === 0 && props.selectedChallenge === "survival") {
-      handleFinish();
+      finishTheGame();
     }
     setBadgeVisibility(true);
     setTimeout(() => {
@@ -86,6 +109,7 @@ const GeoQuiz = (props) => {
         continue;
       } else {
         setQuestion(selectedData[random]);
+        selectedData[random].isAnswered = true;
         break;
       }
     }
@@ -97,15 +121,36 @@ const GeoQuiz = (props) => {
       : setFalseAnswerCounter((prev) => prev + 1);
   }
 
-  function handleFinish() {
-    props.finalizeTrueCount(trueAnswerCounter);
-    props.finalizeFalseCount(falseAnswerCounter);
-    props.finishTheGame();
+  async function finishTheGame() {
+    props.toggleFinishGame();
+    props.setTrue(trueAnswerCounter);
+    props.setFalse(falseAnswerCounter);
+    let copyArr = continents[props.selectedContinent];
+    for (let i = 0; i < copyArr.length; i++) {
+      copyArr[i] = { ...copyArr[i], isAnswered: false };
+    }
+    continents[props.selectedContinent] = copyArr;
+    const updatedHistory = [
+      ...gameHistory,
+      {
+        trueAnswerCount: trueAnswerCounter,
+        falseAnswerCount: falseAnswerCounter,
+        selectedContinent: props.selectedContinent,
+        gameType: props.gameType,
+        selectedChallenge: props.selectedChallenge,
+        date: new Date(Date.now()).toLocaleDateString(),
+      },
+    ];
+    setGameHistory(updatedHistory);
+    console.log("====================================");
+    console.log(updatedHistory);
+    console.log("====================================");
+    await AsyncStorage.setItem("gameHistory", JSON.stringify(updatedHistory));
   }
 
   function checkAllQuestionsAnswered() {
     if (counter > continents[props.selectedContinent].length) {
-      handleFinish();
+      finishTheGame();
     }
   }
 
@@ -113,14 +158,14 @@ const GeoQuiz = (props) => {
     <View style={styles.container}>
       <View style={styles.gameInfo}>
         {props.selectedChallenge === "timeTrail" ? (
-          <Countdown onFinish={handleFinish} duration={60} />
+          <Countdown onFinish={finishTheGame} duration={60} />
         ) : (
           livesComponents.map((live) => live)
         )}
         <Text variant="headlineLarge">
           {counter}/{continents[props.selectedContinent].length}
         </Text>
-        <ExitPlay onPress={props.handleExit} />
+        <ExitPlay onPress={props.handleExit} label={langObj.exitLabel} />
       </View>
 
       {question.question !== "" ? (

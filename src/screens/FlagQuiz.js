@@ -12,6 +12,11 @@ import ExitPlay from "../components/ExitPlay";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import Countdown from "../components/Countdown";
+import { useContext } from "react";
+import GameContext from "../GameContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import LocalizationContext from "../LocalizationContext";
 const FlagQuiz = (props) => {
   const [question, setQuestion] = useState("");
   const [threeFlag, setThreeFlag] = useState([]);
@@ -26,6 +31,10 @@ const FlagQuiz = (props) => {
     <MaterialCommunityIcons name="cards-heart" size={24} color="red" />,
     <MaterialCommunityIcons name="cards-heart" size={24} color="red" />,
   ]);
+
+  const { langObj } = useContext(LocalizationContext);
+
+  const { gameHistory, setGameHistory, findHistory } = useContext(GameContext);
   const continents = {
     Asia: Asia,
     Europe: Europe,
@@ -71,7 +80,7 @@ const FlagQuiz = (props) => {
     }
     checkAllQuestionsAnswered();
     if (lives === 0 && props.selectedChallenge === "survival") {
-      handleFinish();
+      finishTheGame();
     }
     setBadgeVisibility(true);
     setTimeout(() => {
@@ -137,30 +146,47 @@ const FlagQuiz = (props) => {
       : setFalseAnswerCounter((prev) => prev + 1);
   }
 
-  function handleFinish() {
-    props.finalizeTrueCount(trueAnswerCounter);
-    props.finalizeFalseCount(falseAnswerCounter);
-    props.finishTheGame();
-  }
-
   function checkAllQuestionsAnswered() {
     if (counter > continents[props.selectedContinent].length) {
-      handleFinish();
+      finishTheGame();
     }
+  }
+
+  async function finishTheGame() {
+    props.toggleFinishGame();
+    props.setTrue(trueAnswerCounter);
+    props.setFalse(falseAnswerCounter);
+
+    const updatedHistory = [
+      ...gameHistory,
+      {
+        trueAnswerCount: trueAnswerCounter,
+        falseAnswerCount: falseAnswerCounter,
+        selectedContinent: props.selectedContinent,
+        gameType: props.gameType,
+        selectedChallenge: props.selectedChallenge,
+        date: new Date(Date.now()).toLocaleDateString(),
+      },
+    ];
+    setGameHistory(updatedHistory);
+    console.log("====================================");
+    console.log(updatedHistory);
+    console.log("====================================");
+    await AsyncStorage.setItem("gameHistory", JSON.stringify(updatedHistory));
   }
 
   return (
     <View style={styles.container}>
       <View style={styles.gameInfo}>
         {props.selectedChallenge === "timeTrail" ? (
-          <Countdown onFinish={handleFinish} duration={30} />
+          <Countdown onFinish={finishTheGame} duration={30} />
         ) : (
           livesComponents.map((live) => live)
         )}
         <Text variant="headlineLarge">
           {counter}/{continents[props.selectedContinent].length}
         </Text>
-        <ExitPlay onPress={props.handleExit} />
+        <ExitPlay onPress={props.handleExit} label={langObj.exitLabel} />
       </View>
 
       {question !== "" ? (

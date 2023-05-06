@@ -2,11 +2,12 @@ import { View } from "react-native";
 import { Text, Button } from "react-native-paper";
 import React, { useState } from "react";
 import { StyleSheet } from "react-native";
-
+import { useContext } from "react";
+import LocalizationContext from "../LocalizationContext";
 const ChallengeSelectScreen = (props) => {
   const [selectedChallenge, setSelectedChallenge] = useState(null);
   const { gameType, selectedContinent } = props.route.params;
-
+  const { langObj } = useContext(LocalizationContext);
   function handleNextScreen() {
     props.navigation.navigate("Game", {
       gameType: gameType,
@@ -22,7 +23,7 @@ const ChallengeSelectScreen = (props) => {
   return (
     <View style={styles.container}>
       <Text variant="displaySmall" style={styles.title}>
-        Lastly select your challenge!
+        {langObj.challengePlaceHolder}
       </Text>
       <Button
         mode="contained"
@@ -35,7 +36,7 @@ const ChallengeSelectScreen = (props) => {
           setSelectedChallenge("timeTrail");
         }}
       >
-        Time Trail
+        {langObj.timeTrail}
       </Button>
 
       <Button
@@ -49,7 +50,7 @@ const ChallengeSelectScreen = (props) => {
           setSelectedChallenge("survival");
         }}
       >
-        Survival
+        {langObj.liveGame}
       </Button>
       {selectedChallenge && (
         <Button
@@ -59,7 +60,7 @@ const ChallengeSelectScreen = (props) => {
           style={{ marginTop: 20 }}
           onPress={handleNextScreen}
         >
-          Start the game
+          {langObj.startGameLabel}
         </Button>
       )}
       <Button
@@ -69,7 +70,7 @@ const ChallengeSelectScreen = (props) => {
         style={{ marginTop: 20 }}
         onPress={handlePreviousScreen}
       >
-        Back
+        {langObj.backLabel}
       </Button>
     </View>
   );

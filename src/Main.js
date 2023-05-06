@@ -39,7 +39,11 @@ const Main = () => {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Play" component={PlayStack} />
-        <Stack.Screen name="Settings" component={SettingScreen} />
+        <Stack.Screen
+          options={{ headerShown: true, title: "Settings" }}
+          name="Settings"
+          component={SettingScreen}
+        />
         <Stack.Screen
           options={{ headerShown: true, title: "Game History" }}
           name="Statistics"

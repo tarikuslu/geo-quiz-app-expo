@@ -10,7 +10,7 @@ const ExitPlay = (props) => {
       labelStyle={{ color: "white" }}
       onPress={props.onPress}
     >
-      Exit
+      {props.label}
     </Button>
   );
 };

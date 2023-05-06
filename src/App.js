@@ -12,6 +12,7 @@ import {
 } from "react-native-paper";
 import fontConfig from "../utils/fontConfig";
 import { GameProvider } from "./GameContext";
+import { LocalizationProvider } from "./LocalizationContext";
 export default function App() {
   const [fontsLoaded] = useFonts({
     "Kanit-Regular": require("../assets/fonts/Kanit-Regular.ttf"),
@@ -38,10 +39,12 @@ export default function App() {
   };
 
   return (
-    <GameProvider>
-      <PaperProvider theme={theme}>
-        <Main />
-      </PaperProvider>
-    </GameProvider>
+    <LocalizationProvider>
+      <GameProvider>
+        <PaperProvider theme={theme}>
+          <Main />
+        </PaperProvider>
+      </GameProvider>
+    </LocalizationProvider>
   );
 }

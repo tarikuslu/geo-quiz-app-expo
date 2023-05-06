@@ -1,10 +1,12 @@
 import { View, StyleSheet } from "react-native";
 import { Button, Text } from "react-native-paper";
 import React, { useState } from "react";
-
+import { useContext } from "react";
+import LocalizationContext from "../LocalizationContext";
 const GameTypeSelectScreen = (props) => {
   const [gameType, setGameType] = useState(null);
   const { selectedContinent } = props.route.params;
+  const { langObj } = useContext(LocalizationContext);
   function handleNextScreen() {
     props.navigation.navigate("ChallengeSelect", {
       gameType: gameType,
@@ -21,7 +23,7 @@ const GameTypeSelectScreen = (props) => {
   return (
     <View style={styles.container}>
       <Text variant="displaySmall" style={styles.title}>
-        Select the game type
+        {langObj.gameTypePlaceHolder}
       </Text>
       <Button
         mode="contained"
@@ -33,7 +35,7 @@ const GameTypeSelectScreen = (props) => {
           setGameType("flagQuiz");
         }}
       >
-        Flag Quiz
+        {langObj.flagQuiz}
       </Button>
       <Button
         mode="contained"
@@ -45,7 +47,7 @@ const GameTypeSelectScreen = (props) => {
           setGameType("geocultureQuiz");
         }}
       >
-        Geo Culture Quiz
+        {langObj.geoQuiz}
       </Button>
       {gameType && (
         <Button
@@ -55,7 +57,7 @@ const GameTypeSelectScreen = (props) => {
           style={{ marginTop: 20 }}
           onPress={handleNextScreen}
         >
-          Next
+          {langObj.nextLabel}
         </Button>
       )}
       <Button
@@ -65,7 +67,7 @@ const GameTypeSelectScreen = (props) => {
         style={{ marginTop: 20 }}
         onPress={handlePreviousScreen}
       >
-        Back
+        {langObj.backLabel}
       </Button>
     </View>
   );

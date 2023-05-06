@@ -13,8 +13,6 @@ const GameScreen = (props) => {
   const [trueCount, setTrueCount] = useState(0);
   const [falseCount, setFalseCount] = useState(0);
 
-  const { gameHistory, setGameHistory, findHistory } = useContext(GameContext);
-
   function exitPlay() {
     props.navigation.goBack();
     console.log("====================================");
@@ -22,58 +20,42 @@ const GameScreen = (props) => {
     console.log("====================================");
   }
 
-  async function finishTheGame() {
+  function toggleFinishGame() {
     setIsGameFinished(true);
-
-    const updatedHistory = [
-      ...gameHistory,
-      {
-        trueAnswerCount: trueCount,
-        falseAnswerCount: falseCount,
-        selectedContinent: selectedContinent,
-        gameType: gameType,
-        selectedChallenge: selectedChallenge,
-        date: new Date(Date.now()).toLocaleDateString(),
-      },
-    ];
-    setGameHistory(updatedHistory);
-    console.log("====================================");
-    console.log(updatedHistory);
-    console.log("====================================");
-    await AsyncStorage.setItem("gameHistory", JSON.stringify(updatedHistory));
-  }
-
-  function finalizeTrueCount(count) {
-    setTrueCount(count);
-  }
-
-  function finalizeFalseCount(count) {
-    setFalseCount(count);
   }
 
   function goMainMenu() {
     props.navigation.navigate("Home");
   }
 
+  function setTrue(num) {
+    setTrueCount(num);
+  }
+
+  function setFalse(num) {
+    setFalseCount(num);
+  }
   return !isGameFinished ? (
     <View style={styles.container}>
       {gameType === "flagQuiz" ? (
         <FlagQuiz
           selectedContinent={selectedContinent}
           selectedChallenge={selectedChallenge}
+          gameType={gameType}
           handleExit={exitPlay}
-          finishTheGame={finishTheGame}
-          finalizeTrueCount={finalizeTrueCount}
-          finalizeFalseCount={finalizeFalseCount}
+          toggleFinishGame={toggleFinishGame}
+          setTrue={setTrue}
+          setFalse={setFalse}
         />
       ) : (
         <GeoQuiz
           selectedContinent={selectedContinent}
           selectedChallenge={selectedChallenge}
+          gameType={gameType}
           handleExit={exitPlay}
-          finishTheGame={finishTheGame}
-          finalizeTrueCount={finalizeTrueCount}
-          finalizeFalseCount={finalizeFalseCount}
+          toggleFinishGame={toggleFinishGame}
+          setTrue={setTrue}
+          setFalse={setFalse}
         />
       )}
     </View>

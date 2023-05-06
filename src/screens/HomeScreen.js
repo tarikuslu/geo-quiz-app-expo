@@ -5,12 +5,6 @@ import { Button, Text } from "react-native-paper";
 import { TouchableOpacity } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 const HomeScreen = ({ navigation }) => {
-  clearAsyncStorage = async () => {
-    await AsyncStorage.clear();
-  };
-
-  clearAsyncStorage();
-
   return (
     <View style={styles.container}>
       <Text variant="displayLarge"> GeoQuiz </Text>
@@ -35,7 +29,14 @@ const HomeScreen = ({ navigation }) => {
         >
           <MaterialIcons name="leaderboard" size={110} color="white" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.settingsBtn}>
+        <TouchableOpacity
+          style={styles.settingsBtn}
+          onPress={() =>
+            navigation.navigate("Settings", {
+              screen: "Settings",
+            })
+          }
+        >
           <MaterialIcons name="settings" size={110} color="white" />
         </TouchableOpacity>
       </View>

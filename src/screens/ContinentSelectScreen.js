@@ -8,11 +8,15 @@ import NorthAmerica from "../../assets/svgs/north-america.svg";
 import SouthAmerica from "../../assets/svgs/south-america.svg";
 import Oceania from "../../assets/svgs/oceania.svg";
 import { Button, Text } from "react-native-paper";
+import { useContext } from "react";
+import LocalizationContext from "../LocalizationContext";
 const ContinentSelectScreen = (props) => {
   const [selected, onSelect] = useState(null);
   const [selectedContinent, setSelectedContinent] = useState(null);
   const [selectedContinentComponent, setSelectedContinentComponent] =
     useState(null);
+
+  const { langObj } = useContext(LocalizationContext);
   const continentComponents = {
     Asia: <Asia width={325} height={325} />,
     Europe: <Europe width={325} height={325} />,
@@ -48,6 +52,8 @@ const ContinentSelectScreen = (props) => {
     }
   }, [selectedContinent]);
 
+  console.log(langObj);
+
   function handleNextScreen() {
     props.navigation.navigate("GameTypeSelect", {
       selectedContinent: selectedContinent,
@@ -65,7 +71,7 @@ const ContinentSelectScreen = (props) => {
       <View style={styles.continent}>
         {selectedContinentComponent || (
           <Text variant="displayLarge" style={styles.continentPlaceHolder}>
-            SELECT A CONTINENT TO PLAY!
+            {langObj.continentPlaceHolder}
           </Text>
         )}
       </View>
@@ -81,7 +87,7 @@ const ContinentSelectScreen = (props) => {
             handleContinentComponent();
           }}
         >
-          Asia
+          {langObj.continentAsia}
         </Button>
         <Button
           mode="contained"
@@ -94,7 +100,7 @@ const ContinentSelectScreen = (props) => {
             handleContinentComponent();
           }}
         >
-          Europe
+          {langObj.continentEurope}
         </Button>
         <Button
           mode="contained"
@@ -107,7 +113,7 @@ const ContinentSelectScreen = (props) => {
             handleContinentComponent();
           }}
         >
-          Africa
+          {langObj.continentAfrica}
         </Button>
         <Button
           mode="contained"
@@ -120,7 +126,7 @@ const ContinentSelectScreen = (props) => {
             handleContinentComponent();
           }}
         >
-          North America
+          {langObj.continentNorthAmerica}
         </Button>
         <Button
           mode="contained"
@@ -133,7 +139,7 @@ const ContinentSelectScreen = (props) => {
             handleContinentComponent();
           }}
         >
-          South America
+          {langObj.continentSouthAmerica}
         </Button>
         <Button
           mode="contained"
@@ -146,7 +152,7 @@ const ContinentSelectScreen = (props) => {
             handleContinentComponent();
           }}
         >
-          Oceania
+          {langObj.continentOceania}
         </Button>
       </View>
       {selectedContinentComponent && (
@@ -157,7 +163,7 @@ const ContinentSelectScreen = (props) => {
           style={{ marginTop: 20 }}
           onPress={handleNextScreen}
         >
-          Next
+          {langObj.nextLabel}
         </Button>
       )}
       <Button
@@ -167,7 +173,7 @@ const ContinentSelectScreen = (props) => {
         style={{ marginVertical: 20 }}
         onPress={handlePreviousScreen}
       >
-        Back
+        {langObj.backLabel}
       </Button>
     </ScrollView>
   );
