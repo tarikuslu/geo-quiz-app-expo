@@ -21,9 +21,11 @@ import Countdown from "../components/Countdown";
 import { useContext } from "react";
 import GameContext from "../GameContext";
 import LocalizationContext from "../LocalizationContext";
+import ThemeContext from "../ThemeContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 const GeoQuiz = (props) => {
   const [question, setQuestion] = useState({});
+  const [wrongAnswersDetail, setWrongAnswersDetail] = useState([]);
   const [counter, setCounter] = useState(0);
   const [trueAnswerCounter, setTrueAnswerCounter] = useState(0);
   const [falseAnswerCounter, setFalseAnswerCounter] = useState(0);
@@ -38,6 +40,10 @@ const GeoQuiz = (props) => {
 
   const { gameHistory, setGameHistory, findHistory } = useContext(GameContext);
   const { questionLanguages, langObj } = useContext(LocalizationContext);
+  const { themeType, themeObj } = useContext(ThemeContext);
+  const textColor =
+    themeType === "light" ? themeObj.textSecondary : themeObj.textPrimary;
+
   const continents =
     questionLanguages === "tr"
       ? {
@@ -56,6 +62,7 @@ const GeoQuiz = (props) => {
           SouthAmerica: SouthAmericaEN,
           Oceania: OceaniaEN,
         };
+
   useEffect(() => {
     getQuestion();
   }, []);
@@ -65,7 +72,6 @@ const GeoQuiz = (props) => {
   }, [counter]);
 
   useEffect(() => {
-    console.log("true click");
     setBadgeValue(
       <MaterialCommunityIcons name="check-circle" size={24} color="green" />
     );
@@ -77,7 +83,6 @@ const GeoQuiz = (props) => {
   }, [trueAnswerCounter]);
 
   useEffect(() => {
-    console.log("false click");
     setBadgeValue(<MaterialIcons name="remove-circle" size={24} color="red" />);
 
     setLives((prev) => prev - 1);
@@ -116,6 +121,17 @@ const GeoQuiz = (props) => {
   }
 
   function trueFalseChecker(str) {
+    if (str !== question.correctAnswer) {
+      setWrongAnswersDetail((prev) => [
+        ...prev,
+        {
+          question: question.question,
+          userChoice: str,
+          trueChoice: question.correctAnswer,
+        },
+      ]);
+    }
+
     str === question.correctAnswer
       ? setTrueAnswerCounter((prev) => prev + 1)
       : setFalseAnswerCounter((prev) => prev + 1);
@@ -130,6 +146,7 @@ const GeoQuiz = (props) => {
       copyArr[i] = { ...copyArr[i], isAnswered: false };
     }
     continents[props.selectedContinent] = copyArr;
+
     const updatedHistory = [
       ...gameHistory,
       {
@@ -139,12 +156,13 @@ const GeoQuiz = (props) => {
         gameType: props.gameType,
         selectedChallenge: props.selectedChallenge,
         date: new Date(Date.now()).toLocaleDateString(),
+        id: Date.now(),
+        falseAnswersDetail: wrongAnswersDetail,
       },
     ];
-    setGameHistory(updatedHistory);
-    console.log("====================================");
+
     console.log(updatedHistory);
-    console.log("====================================");
+    setGameHistory(updatedHistory);
     await AsyncStorage.setItem("gameHistory", JSON.stringify(updatedHistory));
   }
 
@@ -155,21 +173,28 @@ const GeoQuiz = (props) => {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: themeObj.appBg }]}>
       <View style={styles.gameInfo}>
         {props.selectedChallenge === "timeTrail" ? (
-          <Countdown onFinish={finishTheGame} duration={60} />
+          <Countdown
+            onFinish={finishTheGame}
+            duration={60}
+            textColor={textColor}
+          />
         ) : (
           livesComponents.map((live) => live)
         )}
-        <Text variant="headlineLarge">
+        <Text variant="headlineLarge" style={{ color: textColor }}>
           {counter}/{continents[props.selectedContinent].length}
         </Text>
         <ExitPlay onPress={props.handleExit} label={langObj.exitLabel} />
       </View>
 
       {question.question !== "" ? (
-        <Text variant="headlineMedium" style={styles.question}>
+        <Text
+          variant="headlineMedium"
+          style={[styles.question, { color: textColor }]}
+        >
           {question.question}
         </Text>
       ) : null}
@@ -185,9 +210,7 @@ const GeoQuiz = (props) => {
         >
           {badgeValue}
         </Badge>
-      ) : (
-        <Badge style={{ backgroundColor: "#065a82" }}></Badge>
-      )}
+      ) : null}
 
       <View style={styles.answerContainer}>
         <TouchableRipple
@@ -227,7 +250,6 @@ const GeoQuiz = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#065a82",
     height: Dimensions.get("window").height,
     gap: 30,
   },

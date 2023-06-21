@@ -7,7 +7,7 @@ const LocalizationContext = createContext();
 
 export function LocalizationProvider({ children }) {
   const [questionLanguages, setQuestionLanguages] = useState("tr");
-  const [langObj, setLangObj] = useState();
+  const [langObj, setLangObj] = useState(tr);
   useEffect(() => {
     handleQuestionLanguage();
   }, []);
@@ -15,16 +15,16 @@ export function LocalizationProvider({ children }) {
   async function handleQuestionLanguage() {
     const lanHistory = await AsyncStorage.getItem("questionLanguage");
     const lanObjHistory = await AsyncStorage.getItem("langObject");
-    console.log("====================================");
-    console.log(lanObjHistory);
-    console.log("====================================");
     if (lanHistory !== null) {
       setQuestionLanguages(JSON.parse(lanHistory));
+    } else {
+      setQuestionLanguages(JSON.parse("tr"));
     }
 
     if (lanObjHistory !== null) {
-      console.log("HEYOOOO");
       setLangObj(JSON.parse(lanObjHistory));
+    } else {
+      setLangObj(JSON.parse(tr));
     }
   }
 

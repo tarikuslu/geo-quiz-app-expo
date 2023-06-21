@@ -13,6 +13,7 @@ import {
 import fontConfig from "../utils/fontConfig";
 import { GameProvider } from "./GameContext";
 import { LocalizationProvider } from "./LocalizationContext";
+import { ThemeProvider } from "./ThemeContext";
 export default function App() {
   const [fontsLoaded] = useFonts({
     "Kanit-Regular": require("../assets/fonts/Kanit-Regular.ttf"),
@@ -39,12 +40,14 @@ export default function App() {
   };
 
   return (
-    <LocalizationProvider>
-      <GameProvider>
-        <PaperProvider theme={theme}>
-          <Main />
-        </PaperProvider>
-      </GameProvider>
-    </LocalizationProvider>
+    <ThemeProvider>
+      <LocalizationProvider>
+        <GameProvider>
+          <PaperProvider theme={theme}>
+            <Main />
+          </PaperProvider>
+        </GameProvider>
+      </LocalizationProvider>
+    </ThemeProvider>
   );
 }

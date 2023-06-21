@@ -5,6 +5,17 @@ const GameContext = createContext();
 export function GameProvider({ children }) {
   const [gameHistory, setGameHistory] = useState([]);
 
+  /* async function removeItemValue() {
+    try {
+      await AsyncStorage.removeItem("gameHistory");
+      return true;
+    } catch (exception) {
+      return false;
+    }
+  }
+
+  removeItemValue();
+*/
   useEffect(() => {
     findHistory();
   }, []);
@@ -14,9 +25,6 @@ export function GameProvider({ children }) {
 
     if (history !== null) {
       setGameHistory(JSON.parse(history));
-      console.log("NULL DEGILIM");
-    } else {
-      console.log("MORUK BURA ATTI BENI");
     }
   };
 

@@ -1,13 +1,19 @@
 import { View, StyleSheet } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Button, Text } from "react-native-paper";
 import { TouchableOpacity } from "react-native";
+import ThemeContext from "../ThemeContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 const HomeScreen = ({ navigation }) => {
+  const { themeType, themeObj } = useContext(ThemeContext);
+
   return (
-    <View style={styles.container}>
-      <Text variant="displayLarge"> GeoQuiz </Text>
+    <View style={[styles.container, { backgroundColor: themeObj.appBg }]}>
+      <Text variant="displayLarge" style={{ color: themeObj.textPrimary }}>
+        {" "}
+        GeoQuiz{" "}
+      </Text>
       <View style={styles.btnContainer}>
         <TouchableOpacity
           style={styles.playBtn}
@@ -61,18 +67,17 @@ const styles = StyleSheet.create({
   },
   statisticsBtn: {
     ...btn,
-    backgroundColor: "#D5BE28",
+    backgroundColor: "#EBC128",
   },
   settingsBtn: {
     ...btn,
-    backgroundColor: "blue",
+    backgroundColor: "#F75C02",
   },
 
   container: {
     alignItems: "center",
     justifyContent: "space-evenly",
     flex: 1,
-    backgroundColor: "#065a82",
   },
 
   btnContainer: {

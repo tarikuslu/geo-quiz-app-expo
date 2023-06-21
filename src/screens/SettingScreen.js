@@ -11,13 +11,17 @@ import {
 import { StyleSheet } from "react-native";
 import { useContext } from "react";
 import LocalizationContext from "../LocalizationContext";
+import ThemeContext from "../ThemeContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { tr, en } from "../localization";
-
+import { lightTheme, darkTheme } from "../themeConfig";
 const SettingScreen = () => {
-  const { setQuestionLanguages, questionLanguages, setLangObj } =
+  const { setQuestionLanguages, questionLanguages, setLangObj, langObj } =
     useContext(LocalizationContext);
+  const { themeType, themeObj, setThemeType, setThemeObj } =
+    useContext(ThemeContext);
   const [value, setValue] = React.useState(questionLanguages);
+  const [themeValue, setThemeValue] = React.useState(themeType);
   const [visible, setVisible] = React.useState(false);
   const [visible1, setVisible1] = React.useState(false);
   const showModal = () => setVisible(true);
@@ -31,18 +35,27 @@ const SettingScreen = () => {
     if (choice === "tr") {
       setLangObj(tr);
       await AsyncStorage.setItem("langObject", JSON.stringify(tr));
-      console.log("TR GECTIM");
     } else {
       setLangObj(en);
       await AsyncStorage.setItem("langObject", JSON.stringify(en));
-      console.log("EN GECTIM");
     }
   }
 
-  console.log(questionLanguages);
+  async function handleThemeChange(choice) {
+    console.log(choice);
+    if (choice === "light") {
+      setThemeObj(lightTheme);
+      await AsyncStorage.setItem("themeObj", JSON.stringify(lightTheme));
+    } else {
+      setThemeObj(darkTheme);
+      await AsyncStorage.setItem("themeObj", JSON.stringify(darkTheme));
+    }
+    await AsyncStorage.setItem("themeType", JSON.stringify(choice));
+    setThemeType(choice);
+  }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: themeObj.settingsBg }]}>
       <Provider>
         <Portal>
           <Modal
@@ -59,14 +72,14 @@ const SettingScreen = () => {
               value={value}
             >
               <Text variant="bodyLarge" style={{ textAlign: "center" }}>
-                Oyun Dilini Degistir
+                Oyun Dilini Değiştir / Change Language
               </Text>
               <View style={styles.radio}>
-                <Text>English</Text>
+                <Text>İngilizce / English</Text>
                 <RadioButton value="en" />
               </View>
               <View style={styles.radio}>
-                <Text>Turkish</Text>
+                <Text>Türkçe / Turkish</Text>
                 <RadioButton value="tr" />
               </View>
             </RadioButton.Group>
@@ -78,26 +91,42 @@ const SettingScreen = () => {
             onDismiss={hideModal1}
             contentContainerStyle={containerStyle}
           >
-            <RadioButton.Group onValueChange={(newValue) => {}} value={value}>
+            <RadioButton.Group
+              onValueChange={(newValue) => {
+                setThemeValue(newValue);
+                handleThemeChange(newValue);
+              }}
+              value={themeValue}
+            >
               <Text variant="bodyLarge" style={{ textAlign: "center" }}>
-                Tema Degistir
+                {langObj.changeTheme}
               </Text>
               <View style={styles.radio}>
-                <Text>Aydinlik</Text>
-                <RadioButton value="en" />
+                <Text>{langObj.lightLabel}</Text>
+                <RadioButton value="light" />
               </View>
               <View style={styles.radio}>
-                <Text>Karanlik</Text>
-                <RadioButton value="tr" />
+                <Text>{langObj.darkLabel}</Text>
+                <RadioButton value="dark" />
               </View>
             </RadioButton.Group>
           </Modal>
         </Portal>
-        <Button mode="contained" style={{ marginTop: 30 }} onPress={showModal}>
-          Dili Degistir
+        <Button
+          mode="contained"
+          textColor={themeObj.textPrimary}
+          style={{ marginTop: 30, backgroundColor: themeObj.btnBgSecondary }}
+          onPress={showModal}
+        >
+          Oyun Dilini Değiştir / Change Language
         </Button>
-        <Button mode="contained" style={{ marginTop: 30 }} onPress={showModal1}>
-          Tema Degistir
+        <Button
+          mode="contained"
+          textColor={themeObj.textPrimary}
+          style={{ marginTop: 30, backgroundColor: themeObj.btnBgSecondary }}
+          onPress={showModal1}
+        >
+          {langObj.changeTheme}
         </Button>
       </Provider>
     </View>
@@ -107,7 +136,6 @@ const SettingScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 60,
     gap: 30,
   },
 

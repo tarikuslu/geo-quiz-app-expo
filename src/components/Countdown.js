@@ -25,7 +25,10 @@ const Countdown = (props) => {
       size={70}
     >
       {({ remainingTime }) => (
-        <Text variant="headlineSmall"> {remainingTime} </Text>
+        <Text variant="headlineSmall" style={{ color: props.textColor }}>
+          {" "}
+          {remainingTime}{" "}
+        </Text>
       )}
     </CountdownCircleTimer>
   );

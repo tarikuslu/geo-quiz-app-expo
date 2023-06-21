@@ -3,10 +3,13 @@ import { Button, Text } from "react-native-paper";
 import React, { useState } from "react";
 import { useContext } from "react";
 import LocalizationContext from "../LocalizationContext";
+import ThemeContext from "../ThemeContext";
+import { MaterialIcons } from "@expo/vector-icons";
 const GameTypeSelectScreen = (props) => {
   const [gameType, setGameType] = useState(null);
   const { selectedContinent } = props.route.params;
   const { langObj } = useContext(LocalizationContext);
+  const { themeType, themeObj } = useContext(ThemeContext);
   function handleNextScreen() {
     props.navigation.navigate("ChallengeSelect", {
       gameType: gameType,
@@ -18,19 +21,25 @@ const GameTypeSelectScreen = (props) => {
     props.navigation.goBack();
   }
 
-  console.log(selectedContinent);
-
   return (
-    <View style={styles.container}>
-      <Text variant="displaySmall" style={styles.title}>
+    <View style={[styles.container, { backgroundColor: themeObj.appBg }]}>
+      <Text
+        variant="displaySmall"
+        style={[styles.title, { color: themeObj.textPrimary }]}
+      >
         {langObj.gameTypePlaceHolder}
       </Text>
       <Button
         mode="contained"
-        buttonColor="#ebc026"
-        textColor="black"
+        icon={gameType === "flagQuiz" && "check-circle-outline"}
+        buttonColor={themeObj.choiceBtnBg}
+        textColor={themeObj.textSecondary}
         style={{ padding: 5 }}
-        labelStyle={{ fontSize: 22, lineHeight: 22, paddingTop: 5 }}
+        labelStyle={{
+          fontSize: 22,
+          lineHeight: 25,
+          paddingTop: 5,
+        }}
         onPress={() => {
           setGameType("flagQuiz");
         }}
@@ -39,10 +48,11 @@ const GameTypeSelectScreen = (props) => {
       </Button>
       <Button
         mode="contained"
-        buttonColor="#ebc026"
-        textColor="black"
+        icon={gameType === "geocultureQuiz" && "check-circle-outline"}
+        buttonColor={themeObj.choiceBtnBg}
+        textColor={themeObj.textSecondary}
         style={{ padding: 5 }}
-        labelStyle={{ fontSize: 22, lineHeight: 22, paddingTop: 5 }}
+        labelStyle={{ fontSize: 22, lineHeight: 25, paddingTop: 5 }}
         onPress={() => {
           setGameType("geocultureQuiz");
         }}
@@ -52,9 +62,9 @@ const GameTypeSelectScreen = (props) => {
       {gameType && (
         <Button
           variant="contained"
-          buttonColor="#3d0814"
-          textColor="#ffff"
-          style={{ marginTop: 20 }}
+          buttonColor={themeObj.btnBgPrimary}
+          textColor={themeObj.textSecondary}
+          style={{ marginTop: 20, borderWidth: 1, borderColor: "#2d3047" }}
           onPress={handleNextScreen}
         >
           {langObj.nextLabel}
@@ -62,8 +72,8 @@ const GameTypeSelectScreen = (props) => {
       )}
       <Button
         variant="contained"
-        buttonColor="#3d0814"
-        textColor="#ffff"
+        buttonColor={themeObj.btnBgSecondary}
+        textColor={themeObj.textPrimary}
         style={{ marginTop: 20 }}
         onPress={handlePreviousScreen}
       >
@@ -78,12 +88,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     gap: 20,
-    backgroundColor: "#065a82",
   },
 
   title: {
     textAlign: "center",
-    color: "#fff",
   },
 });
 

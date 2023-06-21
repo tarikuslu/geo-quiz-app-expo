@@ -4,10 +4,12 @@ import React, { useState } from "react";
 import { StyleSheet } from "react-native";
 import { useContext } from "react";
 import LocalizationContext from "../LocalizationContext";
+import ThemeContext from "../ThemeContext";
 const ChallengeSelectScreen = (props) => {
   const [selectedChallenge, setSelectedChallenge] = useState(null);
   const { gameType, selectedContinent } = props.route.params;
   const { langObj } = useContext(LocalizationContext);
+  const { themeType, themeObj } = useContext(ThemeContext);
   function handleNextScreen() {
     props.navigation.navigate("Game", {
       gameType: gameType,
@@ -21,15 +23,22 @@ const ChallengeSelectScreen = (props) => {
   }
 
   return (
-    <View style={styles.container}>
-      <Text variant="displaySmall" style={styles.title}>
+    <View style={[styles.container, { backgroundColor: themeObj.appBg }]}>
+      <Text
+        variant="displaySmall"
+        style={[styles.title, { color: themeObj.textPrimary }]}
+      >
         {langObj.challengePlaceHolder}
       </Text>
       <Button
         mode="contained"
-        icon={"timer-sand"}
-        buttonColor="#ebc026"
-        textColor="black"
+        icon={
+          selectedChallenge === "timeTrail"
+            ? "check-circle-outline"
+            : "timer-sand"
+        }
+        buttonColor={themeObj.choiceBtnBg}
+        textColor={themeObj.textSecondary}
         style={{ padding: 5 }}
         labelStyle={{ fontSize: 22, lineHeight: 22, paddingTop: 5 }}
         onPress={() => {
@@ -41,9 +50,13 @@ const ChallengeSelectScreen = (props) => {
 
       <Button
         mode="contained"
-        icon={"heart-outline"}
-        buttonColor="#ebc026"
-        textColor="black"
+        icon={
+          selectedChallenge === "survival"
+            ? "check-circle-outline"
+            : "heart-outline"
+        }
+        buttonColor={themeObj.choiceBtnBg}
+        textColor={themeObj.textSecondary}
         style={{ padding: 5 }}
         labelStyle={{ fontSize: 22, lineHeight: 22, paddingTop: 5 }}
         onPress={() => {
@@ -55,9 +68,9 @@ const ChallengeSelectScreen = (props) => {
       {selectedChallenge && (
         <Button
           variant="contained"
-          buttonColor="#3d0814"
-          textColor="#ffff"
-          style={{ marginTop: 20 }}
+          buttonColor={themeObj.btnBgPrimary}
+          textColor={themeObj.textSecondary}
+          style={{ marginTop: 20, borderWidth: 1, borderColor: "#2d3047" }}
           onPress={handleNextScreen}
         >
           {langObj.startGameLabel}
@@ -65,8 +78,8 @@ const ChallengeSelectScreen = (props) => {
       )}
       <Button
         variant="contained"
-        buttonColor="#3d0814"
-        textColor="#ffff"
+        buttonColor={themeObj.btnBgSecondary}
+        textColor={themeObj.textPrimary}
         style={{ marginTop: 20 }}
         onPress={handlePreviousScreen}
       >
@@ -81,7 +94,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     gap: 20,
-    backgroundColor: "#065a82",
   },
 
   title: {

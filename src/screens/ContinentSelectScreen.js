@@ -10,6 +10,8 @@ import Oceania from "../../assets/svgs/oceania.svg";
 import { Button, Text } from "react-native-paper";
 import { useContext } from "react";
 import LocalizationContext from "../LocalizationContext";
+import ThemeContext from "../ThemeContext";
+
 const ContinentSelectScreen = (props) => {
   const [selected, onSelect] = useState(null);
   const [selectedContinent, setSelectedContinent] = useState(null);
@@ -17,6 +19,7 @@ const ContinentSelectScreen = (props) => {
     useState(null);
 
   const { langObj } = useContext(LocalizationContext);
+  const { themeType, themeObj } = useContext(ThemeContext);
   const continentComponents = {
     Asia: <Asia width={325} height={325} />,
     Europe: <Europe width={325} height={325} />,
@@ -52,8 +55,6 @@ const ContinentSelectScreen = (props) => {
     }
   }, [selectedContinent]);
 
-  console.log(langObj);
-
   function handleNextScreen() {
     props.navigation.navigate("GameTypeSelect", {
       selectedContinent: selectedContinent,
@@ -67,10 +68,16 @@ const ContinentSelectScreen = (props) => {
   function handleContinentComponent() {}
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container, { backgroundColor: themeObj.appBg }]}>
       <View style={styles.continent}>
         {selectedContinentComponent || (
-          <Text variant="displayLarge" style={styles.continentPlaceHolder}>
+          <Text
+            variant="displayLarge"
+            style={[
+              styles.continentPlaceHolder,
+              { color: themeObj.textPrimary },
+            ]}
+          >
             {langObj.continentPlaceHolder}
           </Text>
         )}
@@ -78,8 +85,8 @@ const ContinentSelectScreen = (props) => {
       <View style={styles.buttonsContainer}>
         <Button
           mode="contained"
-          buttonColor="#ebc026"
-          textColor="black"
+          buttonColor={themeObj.choiceBtnBg}
+          textColor={themeObj.textSecondary}
           style={{ padding: 5 }}
           labelStyle={{ fontSize: 22, lineHeight: 22, paddingTop: 5 }}
           onPress={() => {
@@ -91,8 +98,8 @@ const ContinentSelectScreen = (props) => {
         </Button>
         <Button
           mode="contained"
-          buttonColor="#ebc026"
-          textColor="black"
+          buttonColor={themeObj.choiceBtnBg}
+          textColor={themeObj.textSecondary}
           style={{ padding: 5 }}
           labelStyle={{ fontSize: 22, lineHeight: 22, paddingTop: 5 }}
           onPress={() => {
@@ -104,8 +111,8 @@ const ContinentSelectScreen = (props) => {
         </Button>
         <Button
           mode="contained"
-          buttonColor="#ebc026"
-          textColor="black"
+          buttonColor={themeObj.choiceBtnBg}
+          textColor={themeObj.textSecondary}
           style={{ padding: 5 }}
           labelStyle={{ fontSize: 22, lineHeight: 22, paddingTop: 5 }}
           onPress={() => {
@@ -117,8 +124,8 @@ const ContinentSelectScreen = (props) => {
         </Button>
         <Button
           mode="contained"
-          buttonColor="#ebc026"
-          textColor="black"
+          buttonColor={themeObj.choiceBtnBg}
+          textColor={themeObj.textSecondary}
           style={{ padding: 5 }}
           labelStyle={{ fontSize: 22, lineHeight: 22, paddingTop: 5 }}
           onPress={() => {
@@ -130,8 +137,8 @@ const ContinentSelectScreen = (props) => {
         </Button>
         <Button
           mode="contained"
-          buttonColor="#ebc026"
-          textColor="black"
+          buttonColor={themeObj.choiceBtnBg}
+          textColor={themeObj.textSecondary}
           style={{ padding: 5 }}
           labelStyle={{ fontSize: 22, lineHeight: 22, paddingTop: 5 }}
           onPress={() => {
@@ -143,8 +150,8 @@ const ContinentSelectScreen = (props) => {
         </Button>
         <Button
           mode="contained"
-          buttonColor="#ebc026"
-          textColor="black"
+          buttonColor={themeObj.choiceBtnBg}
+          textColor={themeObj.textSecondary}
           style={{ padding: 5 }}
           labelStyle={{ fontSize: 22, lineHeight: 22, paddingTop: 5 }}
           onPress={() => {
@@ -158,9 +165,9 @@ const ContinentSelectScreen = (props) => {
       {selectedContinentComponent && (
         <Button
           variant="contained"
-          buttonColor="#3d0814"
-          textColor="#ffff"
-          style={{ marginTop: 20 }}
+          buttonColor={themeObj.btnBgPrimary}
+          textColor={themeObj.textSecondary}
+          style={{ marginTop: 20, borderWidth: 1, borderColor: "#2d3047" }}
           onPress={handleNextScreen}
         >
           {langObj.nextLabel}
@@ -168,8 +175,8 @@ const ContinentSelectScreen = (props) => {
       )}
       <Button
         variant="contained"
-        buttonColor="#3d0814"
-        textColor="#ffff"
+        buttonColor={themeObj.btnBgSecondary}
+        textColor={themeObj.textPrimary}
         style={{ marginVertical: 20 }}
         onPress={handlePreviousScreen}
       >
@@ -182,7 +189,7 @@ const ContinentSelectScreen = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#065a82",
+    backgroundColor: `black`,
   },
   continent: {
     alignItems: "center",
@@ -193,7 +200,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     margin: 10,
     marginTop: 45,
-    color: "#9fb8ad",
   },
 
   buttonsContainer: {

@@ -1,5 +1,5 @@
 import { View, StyleSheet } from "react-native";
-import React, { useCallback } from "react";
+import React, { useContext } from "react";
 import { Text, Button } from "react-native-paper";
 import CountryFlag from "react-native-country-flag";
 import { NavigationContainer } from "@react-navigation/native";
@@ -11,9 +11,10 @@ import GameScreen from "./screens/GameScreen";
 import SettingScreen from "./screens/SettingScreen";
 import StatisticsScreen from "./screens/StatisticsScreen";
 import ChallengeSelectScreen from "./screens/ChallengeSelectScreen";
+import LocalizationContext from "./LocalizationContext";
 const Main = () => {
   const Stack = createNativeStackNavigator();
-
+  const { langObj } = useContext(LocalizationContext);
   const PlayStack = () => {
     return (
       <Stack.Navigator
@@ -40,12 +41,32 @@ const Main = () => {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Play" component={PlayStack} />
         <Stack.Screen
-          options={{ headerShown: true, title: "Settings" }}
+          options={{
+            headerShown: true,
+            title: langObj.settingsTitle,
+            headerStyle: {
+              backgroundColor: "#161925",
+            },
+            headerTitleStyle: {
+              color: "#e1f2fe",
+            },
+            headerTintColor: "#e1f2fe",
+          }}
           name="Settings"
           component={SettingScreen}
         />
         <Stack.Screen
-          options={{ headerShown: true, title: "Game History" }}
+          options={{
+            headerShown: true,
+            title: langObj.gameHistoryTitle,
+            headerStyle: {
+              backgroundColor: "#161925",
+            },
+            headerTitleStyle: {
+              color: "#fff",
+            },
+            headerTintColor: "#e1f2fe",
+          }}
           name="Statistics"
           component={StatisticsScreen}
         />

@@ -15,11 +15,12 @@ import Countdown from "../components/Countdown";
 import { useContext } from "react";
 import GameContext from "../GameContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
 import LocalizationContext from "../LocalizationContext";
+import ThemeContext from "../ThemeContext";
 const FlagQuiz = (props) => {
   const [question, setQuestion] = useState("");
   const [threeFlag, setThreeFlag] = useState([]);
+  const [wrongAnswersDetail, setWrongAnswersDetail] = useState();
   const [counter, setCounter] = useState(0);
   const [trueAnswerCounter, setTrueAnswerCounter] = useState(0);
   const [falseAnswerCounter, setFalseAnswerCounter] = useState(0);
@@ -33,8 +34,10 @@ const FlagQuiz = (props) => {
   ]);
 
   const { langObj } = useContext(LocalizationContext);
-
+  const { themeType, themeObj } = useContext(ThemeContext);
   const { gameHistory, setGameHistory, findHistory } = useContext(GameContext);
+  const textColor =
+    themeType === "light" ? themeObj.textSecondary : themeObj.textPrimary;
   const continents = {
     Asia: Asia,
     Europe: Europe,
@@ -45,6 +48,7 @@ const FlagQuiz = (props) => {
   };
   useEffect(() => {
     getThreeFlag();
+    setWrongAnswersDetail([]);
   }, []);
 
   useEffect(() => {
@@ -52,12 +56,11 @@ const FlagQuiz = (props) => {
   }, [counter]);
 
   useEffect(() => {
-    setBadgeValue(
-      <MaterialCommunityIcons name="check-circle" size={24} color="green" />
-    );
-    console.log("====================================");
-    console.log("true click");
-    console.log("====================================");
+    if (counter) {
+      setBadgeValue(
+        <MaterialCommunityIcons name="check-circle" size={24} color="green" />
+      );
+    }
     setBadgeVisibility(true);
     checkAllQuestionsAnswered();
     setTimeout(() => {
@@ -66,10 +69,12 @@ const FlagQuiz = (props) => {
   }, [trueAnswerCounter]);
 
   useEffect(() => {
-    setBadgeValue(<MaterialIcons name="remove-circle" size={24} color="red" />);
-    console.log("====================================");
-    console.log("true click");
-    console.log("====================================");
+    if (counter) {
+      setBadgeValue(
+        <MaterialIcons name="remove-circle" size={24} color="red" />
+      );
+    }
+
     setLives((prev) => prev - 1);
     setLivesComponents([]);
     for (let i = lives; i >= 1; i--) {
@@ -141,6 +146,23 @@ const FlagQuiz = (props) => {
   }
 
   function trueFalseChecker(arr) {
+    if (arr.name.common !== question) {
+      let rightFlag;
+      threeFlag.forEach((flag) => {
+        if (flag.name.common === question) {
+          rightFlag = flag.flags.png;
+        }
+      });
+      setWrongAnswersDetail((prev) => [
+        ...prev,
+        {
+          question: question,
+          userChoice: arr.flags.png,
+          trueChoice: rightFlag,
+        },
+      ]);
+    }
+
     arr.name.common === question
       ? setTrueAnswerCounter((prev) => prev + 1)
       : setFalseAnswerCounter((prev) => prev + 1);
@@ -156,7 +178,6 @@ const FlagQuiz = (props) => {
     props.toggleFinishGame();
     props.setTrue(trueAnswerCounter);
     props.setFalse(falseAnswerCounter);
-
     const updatedHistory = [
       ...gameHistory,
       {
@@ -166,31 +187,38 @@ const FlagQuiz = (props) => {
         gameType: props.gameType,
         selectedChallenge: props.selectedChallenge,
         date: new Date(Date.now()).toLocaleDateString(),
+        id: Date.now(),
+        falseAnswersDetail: wrongAnswersDetail,
       },
     ];
-    setGameHistory(updatedHistory);
-    console.log("====================================");
     console.log(updatedHistory);
-    console.log("====================================");
+    setGameHistory(updatedHistory);
     await AsyncStorage.setItem("gameHistory", JSON.stringify(updatedHistory));
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: themeObj.appBg }]}>
       <View style={styles.gameInfo}>
         {props.selectedChallenge === "timeTrail" ? (
-          <Countdown onFinish={finishTheGame} duration={30} />
+          <Countdown
+            onFinish={finishTheGame}
+            duration={30}
+            textColor={textColor}
+          />
         ) : (
           livesComponents.map((live) => live)
         )}
-        <Text variant="headlineLarge">
+        <Text variant="headlineLarge" style={{ color: textColor }}>
           {counter}/{continents[props.selectedContinent].length}
         </Text>
         <ExitPlay onPress={props.handleExit} label={langObj.exitLabel} />
       </View>
 
       {question !== "" ? (
-        <Text variant="displayMedium" style={styles.question}>
+        <Text
+          variant="displayMedium"
+          style={[styles.question, { color: themeObj.textPrimary }]}
+        >
           {question}
         </Text>
       ) : null}
@@ -206,12 +234,15 @@ const FlagQuiz = (props) => {
         >
           {badgeValue}
         </Badge>
-      ) : (
-        <Badge style={{ backgroundColor: "#065a82" }}></Badge>
-      )}
+      ) : null}
 
       {threeFlag.length > 1 ? (
-        <View style={styles.flags}>
+        <View
+          style={[
+            styles.flags,
+            { backgroundColor: "rgba(255, 234, 238, 0.3)" },
+          ]}
+        >
           <TouchableRipple
             onPress={() => {
               setCounter((prev) => prev + 1);
@@ -225,6 +256,8 @@ const FlagQuiz = (props) => {
                 height: 150,
                 marginTop: 20,
                 alignSelf: "center",
+                borderWidth: 2,
+                borderColor: "#000",
               }}
             />
           </TouchableRipple>
@@ -241,6 +274,8 @@ const FlagQuiz = (props) => {
                 height: 150,
                 marginTop: 20,
                 alignSelf: "center",
+                borderWidth: 2,
+                borderColor: "#000",
               }}
             />
           </TouchableRipple>
@@ -257,6 +292,8 @@ const FlagQuiz = (props) => {
                 height: 150,
                 marginTop: 20,
                 alignSelf: "center",
+                borderWidth: 2,
+                borderColor: "#000",
               }}
             />
           </TouchableRipple>
@@ -270,7 +307,6 @@ const FlagQuiz = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#065a82",
     height: Dimensions.get("window").height,
     justifyContent: "space-evenly",
   },
@@ -284,6 +320,10 @@ const styles = StyleSheet.create({
 
   question: {
     textAlign: "center",
+  },
+
+  flags: {
+    padding: 10,
   },
 });
 

@@ -5,19 +5,16 @@ import FlagQuiz from "./FlagQuiz";
 import GeoQuiz from "./GeoQuiz";
 import { useContext } from "react";
 import GameContext from "../GameContext";
+import LocalizationContext from "../LocalizationContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 const GameScreen = (props) => {
   const { selectedContinent, gameType, selectedChallenge } = props.route.params;
-  console.log(selectedContinent, gameType, selectedChallenge);
   const [isGameFinished, setIsGameFinished] = useState(false);
   const [trueCount, setTrueCount] = useState(0);
   const [falseCount, setFalseCount] = useState(0);
-
+  const { langObj } = useContext(LocalizationContext);
   function exitPlay() {
     props.navigation.goBack();
-    console.log("====================================");
-    console.log("pressed");
-    console.log("====================================");
   }
 
   function toggleFinishGame() {
@@ -62,13 +59,13 @@ const GameScreen = (props) => {
   ) : (
     <View style={styles.results}>
       <Text variant="headlineLarge" style={styles.header}>
-        The game has finished!
+        {langObj.finishingTitle}
       </Text>
       <Text variant="headlineSmall" style={styles.count}>
-        You got {trueCount} true answer
+        {langObj.trueLabel} {trueCount}
       </Text>
       <Text variant="headlineSmall" style={styles.count}>
-        You got {falseCount} false answer
+        {langObj.falseLabel} {falseCount}
       </Text>
       <Button
         mode="contained"
@@ -77,7 +74,7 @@ const GameScreen = (props) => {
         icon={"home-circle-outline"}
         onPress={goMainMenu}
       >
-        Go back to main menu
+        {langObj.backToHome}
       </Button>
     </View>
   );
@@ -86,7 +83,7 @@ const GameScreen = (props) => {
 const styles = StyleSheet.create({
   results: {
     flex: 1,
-    backgroundColor: "green",
+    backgroundColor: "#0C4E3E",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -97,8 +94,8 @@ const styles = StyleSheet.create({
   },
 
   count: {
-    backgroundColor: "blue",
-    color: "#fff",
+    backgroundColor: "#e1f2fe",
+    color: "#161925",
     padding: 10,
     marginBottom: 30,
   },
