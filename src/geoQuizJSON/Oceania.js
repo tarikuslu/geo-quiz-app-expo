@@ -73,11 +73,11 @@ export default [
   },
   {
     id: 9,
-    question: "What is the highest mountain in New Zealand?",
-    answer1: "Mount Ngauruhoe",
-    answer2: "Mount Cook",
-    answer3: "Mount Taranaki",
-    correctAnswer: "Mount Cook",
+    question: "Yeni Zelanda'da ki en yüksek dağ hangisidir?",
+    answer1: "Ngauruhoe Dağı",
+    answer2: "Cook Dağı",
+    answer3: "Taranaki Dağı",
+    correctAnswer: "Cook Dağı",
     isAnswered: false,
   },
   {

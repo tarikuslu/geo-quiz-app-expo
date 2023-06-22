@@ -72,10 +72,13 @@ const GeoQuiz = (props) => {
   }, [counter]);
 
   useEffect(() => {
-    setBadgeValue(
-      <MaterialCommunityIcons name="check-circle" size={24} color="green" />
-    );
-    setBadgeVisibility(true);
+    if (counter) {
+      setBadgeValue(
+        <MaterialCommunityIcons name="check-circle" size={24} color="green" />
+      );
+      setBadgeVisibility(true);
+    }
+
     checkAllQuestionsAnswered();
     setTimeout(() => {
       setBadgeVisibility(false);
@@ -83,7 +86,12 @@ const GeoQuiz = (props) => {
   }, [trueAnswerCounter]);
 
   useEffect(() => {
-    setBadgeValue(<MaterialIcons name="remove-circle" size={24} color="red" />);
+    if (counter) {
+      setBadgeValue(
+        <MaterialIcons name="remove-circle" size={24} color="red" />
+      );
+      setBadgeVisibility(true);
+    }
 
     setLives((prev) => prev - 1);
 
@@ -98,7 +106,7 @@ const GeoQuiz = (props) => {
     if (lives === 0 && props.selectedChallenge === "survival") {
       finishTheGame();
     }
-    setBadgeVisibility(true);
+
     setTimeout(() => {
       setBadgeVisibility(false);
     }, 500);

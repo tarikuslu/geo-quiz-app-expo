@@ -60,8 +60,9 @@ const FlagQuiz = (props) => {
       setBadgeValue(
         <MaterialCommunityIcons name="check-circle" size={24} color="green" />
       );
+      setBadgeVisibility(true);
     }
-    setBadgeVisibility(true);
+
     checkAllQuestionsAnswered();
     setTimeout(() => {
       setBadgeVisibility(false);
@@ -69,10 +70,11 @@ const FlagQuiz = (props) => {
   }, [trueAnswerCounter]);
 
   useEffect(() => {
-    if (counter) {
+    if (counter >= 1) {
       setBadgeValue(
         <MaterialIcons name="remove-circle" size={24} color="red" />
       );
+      setBadgeVisibility(true);
     }
 
     setLives((prev) => prev - 1);
@@ -87,7 +89,6 @@ const FlagQuiz = (props) => {
     if (lives === 0 && props.selectedChallenge === "survival") {
       finishTheGame();
     }
-    setBadgeVisibility(true);
     setTimeout(() => {
       setBadgeVisibility(false);
     }, 500);

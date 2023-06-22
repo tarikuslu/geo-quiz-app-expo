@@ -2,7 +2,7 @@ export default [
   {
     id: 1,
     question: "Avrupa'nın en uzun nehri hangisidir?",
-    answer1: "Saone",
+    answer1: "Saone Nehri",
     answer2: "Volga Nehri",
     answer3: "Shannon Nehri",
     correctAnswer: "Volga Nehri",

@@ -91,7 +91,7 @@ export default [
   },
   {
     id: 11,
-    question: "What is the length of The Great Wall of China?",
+    question: "Çin Seddinin uzunluğu kaç km'dir?",
     answer1: "21.020 km",
     answer2: "21.196 km",
     answer3: "22.520 km",
